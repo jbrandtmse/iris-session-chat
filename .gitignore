@@ -4,3 +4,5 @@ iris-main.log
 .git
 **.tar.gz
 **.tar
+irislib/
+sources/

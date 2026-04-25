@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "localdocker:IRISAPP",
+			"uri": "isfs://localdocker:irisapp/?system=1"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"Dockerfile*": "dockerfile",
+			"iris.script": "objectscript"
+		},
+		"chat.tools.terminal.autoApprove": {
+			"docker exec": true
+		},
+		"intersystems.servers": {
+			"localdocker": {
+				"webServer": {
+					"scheme": "http",
+					"host": "localhost",
+					"port": 52773
+				},
+				"description": "localdocker",
+				"username": "_SYSTEM"
+			}
+		},
+		"postman.settings.dotenv-detection-notification-visibility": false
+	}
+}
