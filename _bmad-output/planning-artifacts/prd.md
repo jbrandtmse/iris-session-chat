@@ -129,7 +129,7 @@ Alex is a mid-level integration engineer at a regional health system. It's 11:42
 The alert includes a session ID. Six months ago, she would have opened four browser tabs — Visual Trace, Event Log, Rule Log, and the Business Process source code in Studio — and spent the next half hour piecing together what happened. Tonight, she opens a terminal.
 
 ```
-Do ##class(Custom.EnsSession.Shell).Run("CQGATEWAY", 38903)
+Do ##class(Custom.EnsSession.Shell).Run("IRISAPP", 38903)
 ```
 
 *"What happened in this session?"*
@@ -148,7 +148,7 @@ It's 11:53pm. She's already filing the incident ticket. The downstream system is
 
 Jordan joined the team three months ago. He knows ObjectScript basics but has never diagnosed a production session failure on his own. His senior engineer is on PTO. An ADT feed has been silent for two hours and the clinical team is calling.
 
-The senior engineer texts: "Look at session 42751 in CENGATEWAY. Use the chat tab."
+The senior engineer texts: "Look at session 42751 in IRISAPP. Use the chat tab."
 
 Jordan opens the Management Portal, finds the session in the Message Viewer, and clicks through to the Visual Trace. He sees a fourth tab he hasn't noticed before: **Chat**.
 
@@ -168,11 +168,11 @@ Sam manages IRIS infrastructure for a healthcare network with eight active names
 
 Her setup checklist:
 1. Compile all `Custom.EnsSession.*` and `Custom.EnsPortal.*` classes in **HSCUSTOM** — one compilation, no per-namespace duplication
-2. Add package mapping from HSCUSTOM to the two most active namespaces (CENGATEWAY, CQGATEWAY) — she'll expand to others after validation
+2. Add package mapping from HSCUSTOM to the target namespace (e.g. IRISAPP) — she'll expand to others after validation
 3. Create the IRIS Wallet entry `AISecrets.AnthropicKey` with the API key
-4. Distribute bookmark URLs to the engineering team: `https://<host>/csp/healthshare/CENGATEWAY/Custom.EnsPortal.MessageViewer.zen`
+4. Distribute bookmark URLs to the engineering team: `https://<host>/csp/healthshare/IRISAPP/Custom.EnsPortal.MessageViewer.zen`
 
-She opens a terminal and runs validation: `Do ##class(Custom.EnsSession.Shell).Run("CENGATEWAY", 12345)`. The agent responds. She verifies read-only behavior — no new rows in any Ens table. Two hours from first compile to team-wide availability.
+She opens a terminal and runs validation: `Do ##class(Custom.EnsSession.Shell).Run("IRISAPP", 12345)`. The agent responds. She verifies read-only behavior — no new rows in any Ens table. Two hours from first compile to team-wide availability.
 
 **Requirements revealed:** HSCUSTOM single-compile deployment, package mapping to target namespaces, IRIS Wallet credential management, bookmark URL per namespace, CSP session inheritance (no second login), read-only verifiable.
 
@@ -477,6 +477,10 @@ Documentation is built incrementally alongside story development — each story 
 - **FR35:** The system records every diagnostic conversation turn — IRIS user, Ensemble session ID, timestamp, tools invoked, and token counts — in a queryable audit log
 - **FR36:** All product operations respect existing IRIS RBAC — operators can only access session data they are already permitted to view in the Management Portal
 - **FR37:** The product operates exclusively on non-PHI namespaces in v1; deployment to PHI-bearing namespaces requires explicit configuration of a compliant LLM provider
+
+### Test Infrastructure
+
+- **FR38:** A sample Interoperability production and session seeder are provided in the SAgent.Test package so that developers and validators can generate repeatable, realistic session data covering all diagnostic tool scenarios (simple passthrough, routing decision, Business Process error, HL7 body, JSON body) without requiring access to a production namespace.
 
 ## Non-Functional Requirements
 

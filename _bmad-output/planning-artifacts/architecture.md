@@ -437,7 +437,7 @@ Do ..UseToolSet("SAgent.Tools.Tools")
 | Anti-pattern | Correct pattern |
 |---|---|
 | `Quit tSC` from a tool method | Try/Catch + return error %DynamicObject |
-| `ZN "CENGATEWAY"` inside any class | Package mapping makes this unnecessary |
+| `ZN "<TARGET_NS>"` inside any class | Package mapping makes this unnecessary |
 | `hdr.ID` in JOINs | Always `hdr.%ID` |
 | `ORDER BY TimeCreated` in session trace | `ORDER BY %ID` |
 | Raw `hdr.ErrorStatus` in SELECT | `%ODBCOUT(hdr.ErrorStatus)` |

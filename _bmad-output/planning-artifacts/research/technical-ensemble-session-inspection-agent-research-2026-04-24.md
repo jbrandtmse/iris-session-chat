@@ -206,7 +206,7 @@ Two sibling projects have already solved subsets of our problem — they're enor
 
 1. **`sources/diagramtool/`** (ST-003) — mermaid-sequence-diagram generator over `Ens.MessageHeader`. Its `docs/dev-notes-correlation.md` is the *best existing articulation of Ensemble message correlation logic in plain English* — covers inproc vs queued correlation, `CorrespondingMessageId` vs `ReturnQueueName` fallback, unpaired-message warnings. Will be directly reused in Step 3.
 
-2. **`/Users/jbrandt/iris-view-agent/`** — a Claude Code skill (`iris-trace-query`) that lets users interactively build SQL against `Ens.MessageHeader` + body tables via the Atelier API. The `learned-schemas/` directory is a *production-tested* schema reference, updated across multiple namespaces (QHINGATEWAY, CQGATEWAY02, FHIRGATEWAY, etc.). We inherit its verified column lists, encoding-decode tricks (`%EXTERNAL`, `%ODBCOUT`), join patterns, and performance gotchas.
+2. **`/Users/jbrandt/iris-view-agent/`** — a Claude Code skill (`iris-trace-query`) that lets users interactively build SQL against `Ens.MessageHeader` + body tables via the Atelier API. The `learned-schemas/` directory is a *production-tested* schema reference, updated across multiple namespaces (QHINGATEWAY, IRISAPP, IRISAPP, etc.). We inherit its verified column lists, encoding-decode tricks (`%EXTERNAL`, `%ODBCOUT`), join patterns, and performance gotchas.
 
 *Neither is an authoritative source by itself; both cite verification dates against real namespaces. We will treat their claims as "validated hypotheses" that still need cross-check against `irislib/Ens/*` for our target IRIS version (2026.2).*
 

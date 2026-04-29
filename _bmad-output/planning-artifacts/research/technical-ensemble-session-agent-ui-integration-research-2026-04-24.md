@@ -417,7 +417,7 @@ Method SendChatMessage(input As %String) As %String [ ZenMethod ]
 
 ### 4.1 The Problem Statement
 
-Our custom classes compile in HSCUSTOM. The portal CSP app serves pages from **whichever namespace the user is currently in** (e.g., `/csp/healthshare/cengateway` → CENGATEWAY). We need:
+Our custom classes compile in HSCUSTOM. The portal CSP app serves pages from **whichever namespace the user is currently in** (e.g., `/csp/healthshare/cengateway` → IRISAPP). We need:
 
 1. Classes compiled ONCE in HSCUSTOM to be **callable from every interop namespace**.
 2. The CSP URL to hit the portal's existing CSP app (same session cookie, no re-auth).
@@ -443,13 +443,13 @@ Our custom classes compile in HSCUSTOM. The portal CSP app serves pages from **w
 - Package Name: `Custom.EnsPortal`
 - Source Database: HSCUSTOMCODE
 
-Apply to `%ALL` if we want universal availability; or apply per-namespace (CENGATEWAY, CQGATEWAY02, etc.) if more controlled.
+Apply to `%ALL` if we want universal availability; or apply per-namespace (IRISAPP, IRISAPP, etc.) if more controlled.
 
 **Step 3: Confirm CSP app routing works**
-- The portal URL `/csp/healthshare/cengateway/Custom.EnsPortal.VisualTrace.zen?SESSIONID=42751` resolves via the CENGATEWAY CSP app.
+- The portal URL `/csp/healthshare/cengateway/Custom.EnsPortal.VisualTrace.zen?SESSIONID=42751` resolves via the IRISAPP CSP app.
 - The CSP app looks up `Custom.EnsPortal.VisualTrace` — thanks to package mapping, finds it in HSCUSTOMCODE.
-- The page runs **with `$NAMESPACE = "CENGATEWAY"`** — no switching needed.
-- Our tool queries `Ens.MessageHeader` in CENGATEWAY — correct target namespace automatically.
+- The page runs **with `$NAMESPACE = "IRISAPP"`** — no switching needed.
+- Our tool queries `Ens.MessageHeader` in IRISAPP — correct target namespace automatically.
 
 **This is the simplest possible deployment.** No namespace switching in code, no separate login, same CSP session cookie.
 
@@ -462,7 +462,7 @@ https://<portal-host>/csp/healthshare/<TARGET_NS>/Custom.EnsPortal.MessageViewer
 ```
 
 - `<portal-host>`: the IRIS host (e.g., `cen-hsgw-02.val.medallies.cloud`).
-- `<TARGET_NS>`: the interop namespace the user wants to inspect (CENGATEWAY, CQGATEWAY02, FHIRGATEWAY, etc.). The user can keep multiple bookmarks, one per namespace.
+- `<TARGET_NS>`: the interop namespace the user wants to inspect (IRISAPP, IRISAPP, IRISAPP, etc.). The user can keep multiple bookmarks, one per namespace.
 - No query parameters needed for the viewer; the user searches within the page.
 
 **From the viewer, clicking a session opens**:
@@ -508,13 +508,13 @@ Within a `%OnAfterCreatePage`, a ZenMethod, or an `OnDrawContent` callback:
 - **DO** use **temporary namespace switching with `new $NAMESPACE`** if absolutely necessary:
   ```objectscript
   New $NAMESPACE
-  Set $NAMESPACE = "CENGATEWAY"
+  Set $NAMESPACE = "IRISAPP"
   // scoped work
   // on Quit, $NAMESPACE automatically restores
   ```
 - **Or** use **`ZUtil` cross-namespace calls**:
   ```objectscript
-  Set result = ##class(Custom.EnsSession.Tools.Trace).GetSessionSummary@"CENGATEWAY"(sessionId)
+  Set result = ##class(Custom.EnsSession.Tools.Trace).GetSessionSummary@"IRISAPP"(sessionId)
   // @namespace syntax runs the method in the target namespace without changing $NAMESPACE
   ```
 
@@ -679,7 +679,7 @@ An operator runs `Do ##class(Custom.EnsSession.Shell).Run()` from an IRIS termin
 /// Terminal entry point for the Ensemble Session Inspection Agent.
 /// Usage:
 ///   Do ##class(Custom.EnsSession.Shell).Run()
-///   Do ##class(Custom.EnsSession.Shell).Run("CENGATEWAY", 42751)
+///   Do ##class(Custom.EnsSession.Shell).Run("IRISAPP", 42751)
 Class Custom.EnsSession.Shell [ Abstract, System = 4 ]
 {
 
@@ -765,7 +765,7 @@ If the default ShellTools (filesystem/shell) cluttering the toolset bothers you,
 - [ ] HSCUSTOM has the `Custom.EnsSession.Shell` class compiled
 - [ ] HSCUSTOM has the `Custom.EnsSession.Tools*` classes compiled (from prior research)
 - [ ] IRIS Wallet entry `AISecrets.AnthropicKey` is set
-- [ ] Running `Do ##class(Custom.EnsSession.Shell).Run("CENGATEWAY", 42751)` produces the shell
+- [ ] Running `Do ##class(Custom.EnsSession.Shell).Run("IRISAPP", 42751)` produces the shell
 - [ ] Asking "what happened in this session" calls `GetSessionSummary` and returns a narrative
 
 ---
@@ -960,7 +960,7 @@ Class Custom.EnsSession.Agent Extends %AI.Agent [ System = 4 ]
 
 ### 8.5 Verification Checklist
 
-- [ ] Bookmark URL `/csp/healthshare/CENGATEWAY/Custom.EnsPortal.VisualTrace.zen?SESSIONID=42751` loads the custom page
+- [ ] Bookmark URL `/csp/healthshare/IRISAPP/Custom.EnsPortal.VisualTrace.zen?SESSIONID=42751` loads the custom page
 - [ ] 4 tabs visible: Header / Body / Contents / Chat
 - [ ] Chat tab shows a skeleton with message area + input
 - [ ] Sending "what happened in this session" produces an agent narrative in under 15 seconds
@@ -1020,7 +1020,7 @@ That's the whole thing. Everything else (search, pagination, column rendering, s
 
 ### 9.4 Verification Checklist
 
-- [ ] Bookmark URL `/csp/healthshare/CENGATEWAY/Custom.EnsPortal.MessageViewer.zen` loads the custom page
+- [ ] Bookmark URL `/csp/healthshare/IRISAPP/Custom.EnsPortal.MessageViewer.zen` loads the custom page
 - [ ] Search works identically to the stock MessageViewer
 - [ ] Clicking a session ID in the results table opens `Custom.EnsPortal.VisualTrace.zen?SESSIONID=...` in a new window
 - [ ] The opened page has the chat tab
@@ -1128,7 +1128,7 @@ https://<host>/csp/healthshare/<TARGET_NS>/Custom.EnsPortal.MessageViewer.zen
 
 **One-line Phase 1 test**:
 ```objectscript
-Do ##class(Custom.EnsSession.Shell).Run("CENGATEWAY", 42751)
+Do ##class(Custom.EnsSession.Shell).Run("IRISAPP", 42751)
 ```
 
 **Phase 2 key patterns**:

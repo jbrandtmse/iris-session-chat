@@ -1,6 +1,20 @@
+# Ensemble Session Inspection Agent
+
+> Hackathon 2026 — planned but not selected for implementation. To be built in a future sprint.
+
+## What Is This?
+
+The **Ensemble Session Inspection Agent** is an AI-powered diagnostic tool for InterSystems Ensemble/IRIS Interoperability productions. Given a session ID, it correlates message headers, message bodies, the event log, rule log, and Business Process source code to produce a plain-English narrative of what happened — replacing 20-30 minutes of expert tab-switching with a 30-second conversation.
+
+This project was designed and planned during the READY 2026 internal hackathon. The team chose a different project for the hackathon implementation sprint, but the Ensemble Session Inspection Agent is intended for future development.
+
+See [`_bmad-output/planning-artifacts/`](./_bmad-output/planning-artifacts/) for the full product brief, PRD, architecture doc, and epics that were produced during planning.
+
+---
+
 # READY Hackathon Dev Template
 
-This repo provides a template to kickstart development with AI Hub. 
+This repo is based on the hackathon dev template, which provides a template to kickstart development with AI Hub.
 
 ## Contents
 

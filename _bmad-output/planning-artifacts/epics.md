@@ -135,6 +135,7 @@ FR34: Epic 1 — Read-only verifiable (no Ens mutations)
 FR35: Epic 1 — Audit log per chat turn
 FR36: Epic 1 — IRIS RBAC inheritance
 FR37: Epic 1 — Non-PHI namespace scoping (v1)
+FR38: Epic 1, Story 1.2 — Sample production and test session seeder
 ```
 
 ## Epic List
@@ -217,7 +218,36 @@ So that all subsequent stories compile cleanly without conflicts from the placeh
 
 ---
 
-### Story 1.2: Audit Log and Read-Only Policy
+### Story 1.2: Sample Interoperability Production and Test Session Seeder
+
+As a developer building and validating diagnostic tools,
+I want a realistic sample Interoperability production in the IRISAPP namespace
+with a seeder that generates sessions covering all diagnostic scenarios,
+So that every tool story has concrete, repeatable session data to validate against.
+
+**Acceptance Criteria:**
+
+**Given** `SAgent.Test.SampleProduction.Setup.CreateAndRun()` is called in IRISAPP
+**When** it completes
+**Then** a production named "SAgent.Sample" is configured and running in IRISAPP
+**And** the production has: a Business Service, a routing rule with two branches, a Business Process, and two Business Operations
+
+**Given** `SAgent.Test.SampleProduction.Seeder.GenerateSessions()` is called
+**When** it completes
+**Then** it returns a `%DynamicObject` with session IDs for each scenario:
+- `sessionIdSimple` — successful passthrough (BS → Router → BO1)
+- `sessionIdRouted` — routing decision (Router fires a rule and selects BO2)
+- `sessionIdFailed` — session with a known error (BP throws a caught exception, ErrorStatus populated on the response header)
+- `sessionIdHL7` — `EnsLib.HL7.Message` body variant
+- `sessionIdJsonBody` — `%JSON.Adaptor` body variant (custom `SAgent.Test.SampleMsg`)
+**And** all 5 sessions are accessible in the IRISAPP namespace Visual Trace
+
+**Given** a developer follows the README
+**Then** they can call `GenerateSessions()` and use the returned session IDs in all subsequent tool validation steps and in `SAgent.Test.GateTest`
+
+---
+
+### Story 1.3: Audit Log and Read-Only Policy
 
 As a system administrator,
 I want an audit trail for every chat turn and structural read-only enforcement,
@@ -237,7 +267,7 @@ So that I can verify no Ens data is mutated and every diagnostic interaction is 
 
 ---
 
-### Story 1.3: Core Session Timeline Tools
+### Story 1.4: Core Session Timeline Tools
 
 As an integration engineer,
 I want to ask "what happened in this session?" and receive a complete, chronological narrative,
@@ -264,7 +294,7 @@ So that I can understand a production incident without opening multiple Manageme
 
 ---
 
-### Story 1.4: Message Body Inspection Tools
+### Story 1.5: Message Body Inspection Tools
 
 As an integration engineer,
 I want to ask "what's in the body of this message?" and receive decoded contents,
@@ -287,7 +317,7 @@ So that I can understand message payloads without writing ObjectScript queries.
 
 ---
 
-### Story 1.5: Error Decoding Tool
+### Story 1.6: Error Decoding Tool
 
 As an integration engineer,
 I want to ask "what does this error mean?" and receive a plain-English explanation,
@@ -311,7 +341,7 @@ So that I can understand IRIS %Status error codes without documentation lookup.
 
 ---
 
-### Story 1.6: Agent Assembly and Terminal Shell
+### Story 1.7: Agent Assembly and Terminal Shell
 
 As an integration engineer,
 I want to type one command with a namespace and session ID and begin a multi-turn diagnostic conversation,
@@ -327,7 +357,7 @@ So that I can diagnose production incidents from a terminal without any addition
 **When** the wallet entry AISecrets.OpenAIKey is populated
 **Then** agent.%Init() succeeds and agent.Provider is not null
 
-**Given** Do ##class(SAgent.Main.Shell).Run("CENGATEWAY", 42751) is executed
+**Given** Do ##class(SAgent.Main.Shell).Run("IRISAPP", sessions.sessionIdSimple) is executed
 **When** the agent initializes
 **Then** a welcome banner shows namespace and session ID
 **And** multi-turn conversation works — follow-up questions reference prior context
@@ -340,7 +370,7 @@ So that I can diagnose production incidents from a terminal without any addition
 
 ---
 
-### Story 1.7: Installation Guide (README)
+### Story 1.8: Installation Guide (README)
 
 As a system administrator,
 I want a step-by-step installation guide,
@@ -360,7 +390,7 @@ So that I can deploy SAgent to HSCUSTOM and verify it works before any demo.
 
 ---
 
-### Story 1.8: Phase 1 Gate Validation
+### Story 1.9: Phase 1 Gate Validation
 
 As the development team,
 I want to verify all Phase 1 Gate criteria pass before beginning Track B portal work,
@@ -368,14 +398,16 @@ So that the portal integration starts from a stable, verified foundation.
 
 **Acceptance Criteria:**
 
-**Given** Stories 1.1–1.7 are complete
+**Given** Stories 1.1–1.8 are complete
+**And** `SAgent.Test.SampleProduction.Seeder.GenerateSessions()` has been called and its output stored:
+`Set sessions = ##class(SAgent.Test.SampleProduction.Seeder).GenerateSessions()`
 **When** the team runs SAgent.Test.GateTest
 **Then** all 7 criteria pass:
 1. SAgent.Main.Agent compiles and initializes in under 5 seconds
 2. SAgent.Main.Shell.Run() launches an interactive REPL session
 3. SAgent.Tools.Trace and SAgent.Tools.Errors compile without errors
-4. Agent correctly answers "What happened in session X?" (non-empty narrative returned)
-5. Agent correctly answers "What does this error mean?" (decoded error returned)
+4. Agent correctly answers "What happened in session X?" using `sessions.sessionIdSimple` (non-empty narrative returned)
+5. Agent correctly answers "What does this error mean?" using `sessions.sessionIdFailed` (decoded error returned)
 6. Multi-turn confirmed: follow-up question correctly references prior context
 7. Read-only verified: no Ens.* rows added or modified after a full chat turn
 
