@@ -12,6 +12,20 @@ See [`_bmad-output/planning-artifacts/`](./_bmad-output/planning-artifacts/) for
 
 ---
 
+## Prerequisites
+
+**A valid OpenAI API key is required for this project to be functional.**
+
+Create a `.env` file in the root of this repo with the following entry before building or running the container:
+
+```
+OPENAI_API_KEY=sk-...your-key-here...
+```
+
+The `.env` file is listed in `.gitignore` and will not be committed. Without a valid key the sample agent and any AI Hub features that rely on OpenAI will fail.
+
+---
+
 # READY Hackathon Dev Template
 
 This repo is based on the hackathon dev template, which provides a template to kickstart development with AI Hub.
